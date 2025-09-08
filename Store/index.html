@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ShopWave — Modern E‑Commerce Demo</title>
+  <meta name="description" content="Single-file modern responsive e-commerce demo using only HTML, CSS and JS.">
+  <style>
+    :root{
+      --accent:#2563eb;
+      --accent-2:#06b6d4;
+      --muted:#6b7280;
+      --bg:#0f172a;
+      --card:#0b1220;
+      --glass: rgba(255,255,255,0.04);
+      --radius:12px;
+      --max-width:1200px;
+      --shadow: 0 6px 18px rgba(2,6,23,0.6);
+      --card-shadow: 0 8px 24px rgba(2,6,23,0.7);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial;
+      background: linear-gradient(180deg,#071024 0%, #07132a 40%), #031126; color:#e6eef8; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+      padding-bottom:80px;
+    }
+    .container{max-width:var(--max-width);margin:0 auto;padding:24px}
+
+    /* NAV */
+    header{position:sticky;top:0;z-index:60;background:linear-gradient(180deg, rgba(3,6,23,0.6), rgba(3,6,23,0.35));backdrop-filter:saturate(120%) blur(6px);border-bottom:1px solid rgba(255,255,255,0.03)}
+    nav{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0}
+    .brand{display:flex;align-items:center;gap:12px;font-weight:700}
+    .logo{width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;font-weight:800;color:white}
+    .nav-links{display:flex;gap:18px;align-items:center}
+    .nav-links a{color:var(--muted);text-decoration:none;font-weight:600}
+    .nav-links a:hover{color:var(--accent)}
+    .search{position:relative}
+    .search input{padding:8px 36px 8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit}
+    .icons{display:flex;gap:12px;align-items:center}
+    .icon-btn{background:var(--glass);border:1px solid rgba(255,255,255,0.03);padding:8px;border-radius:10px;display:inline-flex;align-items:center;gap:8px;cursor:pointer}
+    .icon-btn:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+
+    /* HERO */
+    .hero{display:grid;grid-template-columns:1fr 420px;gap:28px;align-items:center;margin:28px 0}
+    .hero-card{padding:36px;border-radius:18px;background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));box-shadow:var(--card-shadow)}
+    .hero .title{font-size:28px;line-height:1.05;margin:0}
+    .hero .sub{color:var(--muted);margin-top:8px}
+    .hero .cta{margin-top:18px;display:flex;gap:12px}
+    .btn{display:inline-flex;align-items:center;gap:10px;padding:10px 16px;border-radius:12px;border:0;cursor:pointer;font-weight:700}
+    .btn-primary{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:white;box-shadow:0 8px 24px rgba(37,99,235,0.18)}
+    .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
+    .hero-visual{height:320px;border-radius:18px;overflow:hidden;position:relative}
+    .hero-visual img{width:100%;height:100%;object-fit:cover;display:block;filter:grayscale(0.03) contrast(1.02)}
+
+    /* PRODUCTS */
+    .section-title{display:flex;align-items:center;justify-content:space-between;margin:18px 0}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);transition:transform .22s ease, box-shadow .22s ease}
+    .card:hover{transform:translateY(-8px);box-shadow:var(--shadow)}
+    .card img{width:100%;height:180px;object-fit:cover;border-radius:10px}
+    .card .meta{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
+    .price{font-weight:800}
+    .desc{color:var(--muted);font-size:13px;margin-top:6px}
+    .add{margin-top:12px;display:flex;gap:10px;align-items:center}
+    .qty{width:72px;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit}
+
+    /* CART */
+    .cart-panel{position:fixed;right:20px;top:84px;width:360px;max-width:calc(100% - 48px);background:linear-gradient(180deg, rgba(3,6,23,0.85), rgba(3,6,23,0.95));border-radius:14px;padding:16px;border:1px solid rgba(255,255,255,0.03);box-shadow:var(--card-shadow);display:flex;flex-direction:column;gap:12px}
+    .cart-item{display:flex;gap:12px;align-items:center;padding:8px;border-radius:10px}
+    .cart-item img{width:56px;height:56px;border-radius:8px;object-fit:cover}
+    .cart-footer{display:flex;justify-content:space-between;align-items:center;margin-top:6px}
+    .empty{color:var(--muted);text-align:center;padding:20px}
+
+    /* CHECKOUT FORM */
+    .checkout{margin-top:16px;padding:12px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));border:1px solid rgba(255,255,255,0.02)}
+    .form-row{display:flex;gap:8px}
+    .form-row .field{flex:1}
+    input,select,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit}
+    label{font-size:13px;color:var(--muted);display:block;margin-bottom:6px}
+    .small{font-size:13px;color:var(--muted)}
+
+    /* FOOTER */
+    footer{margin-top:42px;padding:28px 0;color:var(--muted);border-top:1px solid rgba(255,255,255,0.02)}
+
+    /* Responsive */
+    @media (max-width:1024px){.grid{grid-template-columns:repeat(2,1fr)}.hero{grid-template-columns:1fr 320px}}
+    @media (max-width:680px){
+      .nav-links{display:none}
+      .search{display:none}
+      .hero{grid-template-columns:1fr;}
+      .hero-visual{height:220px}
+      .grid{grid-template-columns:1fr}
+      .cart-panel{position:fixed;left:12px;right:12px;bottom:12px;top:auto;width:auto;border-radius:14px}
+    }
+
+    /* small details */
+    .badge{background:rgba(255,255,255,0.06);padding:6px 10px;border-radius:999px;font-weight:700}
+    .muted{color:var(--muted)}
+    .price-old{color:rgba(255,255,255,0.35);text-decoration:line-through;font-weight:600}
+
+    /* smooth scrolling */
+    html{scroll-behavior:smooth}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <nav>
+        <div class="brand">
+          <div class="logo">SW</div>
+          <div>
+            <div style="font-size:14px">ShopWave</div>
+            <div style="font-size:12px;color:var(--muted)">Modern demo store</div>
+          </div>
+        </div>
+
+        <div class="nav-links">
+          <a href="#products">Products</a>
+          <a href="#how">How it works</a>
+          <a href="#contact">Contact</a>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:12px">
+          <div class="search"><input id="search" placeholder="Search products..." /></div>
+          <div class="icons">
+            <button class="icon-btn" id="cartBtn" title="Open cart">🛒 <span id="cartCount" style="font-weight:800">0</span></button>
+            <button class="icon-btn" title="Profile">👤</button>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <div class="hero-card">
+        <h1 class="title">Quality gear, delivered fast — <span style="color:var(--accent)">designed for creators</span></h1>
+        <p class="sub">A neat demo of a single-file e-commerce site. Responsive grid, add-to-cart, checkout form, and a polished UI — all without frameworks.</p>
+        <div class="cta">
+          <button class="btn btn-primary" onclick="scrollToSection('products')">Shop Now</button>
+          <button class="btn btn-ghost" onclick="scrollToSection('how')">How it works</button>
+        </div>
+
+        <div style="display:flex;gap:12px;margin-top:20px;flex-wrap:wrap">
+          <div class="badge">Free shipping over $75</div>
+          <div class="badge">30-day returns</div>
+          <div class="badge">Secure checkout</div>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <img src="https://images.unsplash.com/photo-1517433456452-f9633a875f6f?q=80&w=1200&auto=format&fit=crop" alt="hero">
+      </div>
+    </section>
+
+    <section id="products">
+      <div class="section-title">
+        <h2>Featured Products</h2>
+        <div class="muted">Curated picks for quality & value</div>
+      </div>
+
+      <div class="grid" id="productsGrid">
+        <!-- Products injected by JS -->
+      </div>
+    </section>
+
+    <section id="how" style="margin-top:36px">
+      <div class="section-title">
+        <h2>How it works</h2>
+        <div class="muted">Simple, fast, and transparent</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+        <div class="card">
+          <h3>Browse</h3>
+          <p class="desc">Explore the catalog and use search to find what you need.</p>
+        </div>
+        <div class="card">
+          <h3>Add to Cart</h3>
+          <p class="desc">Choose quantity and add items — your cart saves between visits.</p>
+        </div>
+        <div class="card">
+          <h3>Checkout</h3>
+          <p class="desc">Fill the checkout form and place your order. This demo uses no real payments.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" style="margin-top:36px">
+      <div class="section-title">
+        <h2>Contact & Support</h2>
+        <div class="muted">We're here to help</div>
+      </div>
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:18px">
+        <div class="card">
+          <h3>Send us a message</h3>
+          <p class="desc">Email: support@shopwave.demo — Phone: +1 (555) 123-4567</p>
+          <form id="contactForm" onsubmit="event.preventDefault(); alert('Thanks! This is a demo.')">
+            <label>Name</label>
+            <input required placeholder="Your name" />
+            <label style="margin-top:8px">Message</label>
+            <textarea placeholder="How can we help?" rows="4"></textarea>
+            <div style="margin-top:10px"><button class="btn btn-primary">Send</button></div>
+          </form>
+        </div>
+
+        <div class="card">
+          <h3>Checkout (Demo)</h3>
+          <div class="small">Fill the checkout form below to simulate placing an order.</div>
+          <div class="checkout" id="checkoutBox">
+            <form id="checkoutForm">
+              <label>Full name</label>
+              <input id="fullName" required placeholder="Jane Doe" />
+              <label style="margin-top:8px">Email</label>
+              <input id="email" type="email" required placeholder="you@example.com" />
+              <div class="form-row" style="margin-top:8px">
+                <div class="field">
+                  <label>City</label>
+                  <input id="city" required placeholder="City" />
+                </div>
+                <div class="field">
+                  <label>Postal code</label>
+                  <input id="postal" required placeholder="12345" />
+                </div>
+              </div>
+              <label style="margin-top:8px">Address</label>
+              <input id="address" required placeholder="Street address" />
+              <div style="margin-top:10px;display:flex;gap:8px">
+                <button class="btn btn-primary" type="submit">Place Order</button>
+                <button class="btn btn-ghost" type="button" onclick="clearCart()">Clear Cart</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+        <div>© <strong>ShopWave</strong> — Demo store</div>
+        <div class="muted">Built with ❤️ • Single-file HTML/CSS/JS</div>
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- CART PANEL -->
+  <aside class="cart-panel" id="cartPanel" style="display:none">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <strong>Your Cart</strong>
+      <button class="btn btn-ghost" onclick="toggleCart(false)">Close</button>
+    </div>
+    <div id="cartItems" style="max-height:360px;overflow:auto"></div>
+
+    <div id="cartEmpty" class="empty">Your cart is empty. Add something from the products above.</div>
+
+    <div class="cart-footer">
+      <div>
+        <div class="small">Subtotal</div>
+        <div style="font-weight:800;font-size:18px" id="cartSubtotal">$0.00</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <button class="btn btn-primary" onclick="scrollToSection('checkoutBox');toggleCart(false)">Checkout</button>
+        <button class="btn btn-ghost" onclick="clearCart()">Clear</button>
+      </div>
+    </div>
+  </aside>
+
+  <script>
+    // Sample product data
+    const products = [
+      {id:1,name:'Wireless Headphones',price:69.99,image:'https://via.placeholder.com/600x400?text=Headphones',desc:'Comfortable, long battery life, crisp sound.'},
+      {id:2,name:'Portable Speaker',price:49.50,image:'https://via.placeholder.com/600x400?text=Speaker',desc:'Powerful bass, water-resistant.'},
+      {id:3,name:'Smartwatch Pro',price:129.00,image:'https://via.placeholder.com/600x400?text=Smartwatch',desc:'Track fitness, notifications, long battery.'},
+      {id:4,name:'Compact Camera',price:399.00,image:'https://via.placeholder.com/600x400?text=Camera',desc:'4K video, pocketable, fast autofocus.'},
+      {id:5,name:'Mechanical Keyboard',price:89.99,image:'https://via.placeholder.com/600x400?text=Keyboard',desc:'Tactile switches, RGB lighting.'},
+      {id:6,name:'USB-C Hub',price:29.99,image:'https://via.placeholder.com/600x400?text=USB-C+Hub',desc:'Expand ports, fast data transfer.'}
+    ];
+
+    // Cart state
+    let cart = JSON.parse(localStorage.getItem('shopwave_cart') || '[]');
+
+    // Utilities
+    const $ = (q,el=document)=>el.querySelector(q);
+    const $$ = (q,el=document)=>Array.from(el.querySelectorAll(q));
+
+    function formatPrice(n){return '$' + n.toFixed(2)}
+
+    // Render products
+    function renderProducts(list=products){
+      const grid = $('#productsGrid'); grid.innerHTML='';
+      list.forEach(p=>{
+        const card = document.createElement('div'); card.className='card';
+        card.innerHTML = `
+          <img src="${p.image}" alt="${p.name}">
+          <div style=\"display:flex;justify-content:space-between;align-items:center;\">
+            <div style=\"font-weight:700\">${p.name}</div>
+            <div class=\"price\">${formatPrice(p.price)}</div>
+          </div>
+          <div class=\"desc\">${p.desc}</div>
+          <div class=\"add\">
+            <input type=\"number\" min=\"1\" value=\"1\" class=\"qty\" aria-label=\"qty-${p.id}\">
+            <button class=\"btn btn-primary\" data-id=\"${p.id}\">Add</button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+
+      // attach handlers
+      $$('.btn.btn-primary', grid).forEach(b=>b.addEventListener('click', ()=>{
+        const id = Number(b.getAttribute('data-id'));
+        const qty = Number(b.parentElement.querySelector('.qty').value) || 1;
+        addToCart(id, qty);
+      }));
+    }
+
+    // Cart functions
+    function saveCart(){localStorage.setItem('shopwave_cart', JSON.stringify(cart)); updateCartUI();}
+
+    function addToCart(productId, qty=1){
+      const p = products.find(x=>x.id===productId); if(!p) return;
+      const existing = cart.find(i=>i.id===productId);
+      if(existing){ existing.qty += qty } else { cart.push({id:p.id,name:p.name,price:p.price,image:p.image,qty}) }
+      saveCart(); flash('Added to cart');
+    }
+
+    function removeFromCart(productId){ cart = cart.filter(i=>i.id!==productId); saveCart(); }
+    function changeQty(productId, qty){ const it = cart.find(i=>i.id===productId); if(!it) return; it.qty = qty; if(it.qty<=0) removeFromCart(productId); saveCart(); }
+    function clearCart(){ cart=[]; saveCart(); flash('Cart cleared'); }
+
+    function cartSubtotal(){ return cart.reduce((s,i)=>s + i.price * i.qty, 0); }
+
+    function updateCartUI(){
+      const count = cart.reduce((s,i)=>s + i.qty, 0);
+      $('#cartCount').textContent = count;
+      const items = $('#cartItems'); items.innerHTML='';
+      if(cart.length===0){ $('#cartEmpty').style.display='block'; } else { $('#cartEmpty').style.display='none'; }
+      cart.forEach(i=>{
+        const node = document.createElement('div'); node.className='cart-item';
+        node.innerHTML = `
+          <img src="${i.image}" />
+          <div style=\"flex:1\"> <div style=\"font-weight:700\">${i.name}</div>
+          <div class=\"small muted\">${formatPrice(i.price)} x <input type=\"number\" value=\"${i.qty}\" style=\"width:56px;background:transparent;border:1px solid rgba(255,255,255,0.04);border-radius:6px;padding:6px;color:inherit\" data-id=\"${i.id}\"></div>
+          </div>
+          <div style=\"text-align:right\"><div style=\"font-weight:800\">${formatPrice(i.price * i.qty)}</div>
+          <button class=\"btn btn-ghost\" data-remove=\"${i.id}\" style=\"margin-top:6px\">Remove</button></div>
+        `;
+        items.appendChild(node);
+      });
+
+      // attach listeners for qty inputs & remove
+      $$('.cart-item input', items).forEach(inp=>{
+        inp.addEventListener('change', ()=>{
+          const id = Number(inp.getAttribute('data-id'));
+          const val = Number(inp.value) || 0;
+          changeQty(id, val);
+        });
+      });
+      $$('.cart-item button[data-remove]', items).forEach(b=>b.addEventListener('click', ()=>{ removeFromCart(Number(b.getAttribute('data-remove'))); }));
+
+      $('#cartSubtotal').textContent = formatPrice(cartSubtotal());
+    }
+
+    // helpers
+    function toggleCart(show){ $('#cartPanel').style.display = show ? 'flex' : 'none'; }
+    function scrollToSection(id){ const el = document.getElementById(id); if(el) el.scrollIntoView({behavior:'smooth',block:'center'}); }
+    function flash(msg){
+      const f = document.createElement('div'); f.textContent = msg; f.style= 'position:fixed;left:50%;transform:translateX(-50%);bottom:24px;background:var(--accent);color:#fff;padding:10px 16px;border-radius:8px;z-index:9999;box-shadow:var(--shadow)';
+      document.body.appendChild(f); setTimeout(()=>f.style.opacity='0.0',1400); setTimeout(()=>f.remove(),2000);
+    }
+
+    // search
+    $('#search').addEventListener('input', (e)=>{
+      const q = e.target.value.trim().toLowerCase();
+      if(!q) renderProducts(products);
+      else renderProducts(products.filter(p=> (p.name + ' ' + p.desc).toLowerCase().includes(q)));
+    });
+
+    // checkout handling
+    $('#checkoutForm').addEventListener('submit', (e)=>{
+      e.preventDefault();
+      if(cart.length===0){ alert('Your cart is empty — add items before placing an order.'); return; }
+      const order = {
+        name: $('#fullName').value, email: $('#email').value, address: $('#address').value, city: $('#city').value, postal: $('#postal').value,
+        items:cart, total:cartSubtotal(), placedAt: new Date().toISOString()
+      };
+      console.log('Simulated order:', order);
+      clearCart();
+      alert('Order placed! This is a demo — check console for order data.');
+      $('#checkoutForm').reset();
+    });
+
+    // cart button
+    $('#cartBtn').addEventListener('click', ()=>{ toggleCart(true); });
+
+    // init
+    renderProducts(); updateCartUI();
+
+    // small UX: close cart when clicking outside
+    document.addEventListener('click', (e)=>{
+      const panel = document.getElementById('cartPanel');
+      if(!panel) return;
+      if(panel.style.display==='none') return;
+      if(!panel.contains(e.target) && !e.target.matches('#cartBtn') && !e.target.closest('#cartBtn')){
+        // close only on desktop
+        if(window.innerWidth>680) toggleCart(false);
+      }
+    });
+
+    // save cart before unload
+    window.addEventListener('beforeunload', ()=>{ saveCart(); });
+  </script>
+</body>
+</html>
